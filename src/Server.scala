@@ -4,6 +4,11 @@ import com.sun.net.httpserver.{HttpExchange, HttpHandler, HttpServer}
 
 import scala.util.Try
 
+/**
+  * @author René Vennik
+  * @version 1.0
+  * @since 22-12-2016
+  */
 class Server(routes: String => Any, val port: Int = 80) {
 
   val server: HttpServer = HttpServer.create(new InetSocketAddress(port), 0)
