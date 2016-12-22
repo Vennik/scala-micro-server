@@ -1,6 +1,6 @@
 import java.net.InetSocketAddress
 
-import com.sun.net.httpserver.{HttpExchange, HttpHandler, HttpServer}
+import com.sun.net.httpserver.{HttpExchange, HttpServer}
 
 import scala.util.Try
 
@@ -12,26 +12,19 @@ import scala.util.Try
 class Server(val routes: String => Any, val port: Int = 80) {
 
   val server: HttpServer = HttpServer.create(new InetSocketAddress(port), 0)
-  server.createContext("/", new Handler())
-  server.setExecutor(null)
+  server.createContext("/", (httpExchange: HttpExchange) => {
+    Try(routes(httpExchange.getRequestURI.getPath).toString).toOption match {
+      case Some(response) => handleResponse(httpExchange, 200, response)
+      case _ => handleResponse(httpExchange, 404, "404 - Not Found")
+    }
+  })
   server.start()
 
-  class Handler extends HttpHandler {
-
-    def handle(t: HttpExchange): Unit = {
-      Try(routes(t.getRequestURI.getPath).toString).toOption match {
-        case Some(response) => handleResponse(t, 200, response)
-        case _ => handleResponse(t, 404, "404 - Not Found")
-      }
-    }
-
-    def handleResponse(t: HttpExchange, rCode: Int, response: String): Unit = {
-      t.sendResponseHeaders(rCode, response.length())
-      val os = t.getResponseBody
-      os.write(response.getBytes)
-      os.close()
-    }
-
+  def handleResponse(httpExchange: HttpExchange, rCode: Int, response: String): Unit = {
+    httpExchange.sendResponseHeaders(rCode, response.length())
+    val os = httpExchange.getResponseBody
+    os.write(response.getBytes)
+    os.close()
   }
 
 }
