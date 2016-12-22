@@ -26,7 +26,6 @@ class Handler(val routes: String => Any) extends HttpHandler {
       case Some(response) => handleResponse(t, 200, response)
       case _ => handleResponse(t, 404, "404 - Not Found")
     }
-
   }
 
   def handleResponse(t: HttpExchange, rCode: Int, response: String): Unit = {
