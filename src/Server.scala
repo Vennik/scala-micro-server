@@ -2,7 +2,7 @@ import java.net.InetSocketAddress
 
 import com.sun.net.httpserver.{HttpExchange, HttpServer}
 
-import scala.util.Try
+import scala.util.{Success, Try}
 
 /**
   * @author René Vennik
@@ -13,15 +13,15 @@ class Server(val routes: String => Any, val port: Int = 80) {
 
   val server: HttpServer = HttpServer.create(new InetSocketAddress(port), 0)
   server.createContext("/", (httpExchange: HttpExchange) => {
-    Try(routes(httpExchange.getRequestURI.getPath).toString).toOption match {
-      case Some(response) => handleResponse(httpExchange, 200, response)
+    Try(routes(httpExchange.getRequestURI.getPath).toString) match {
+      case Success(response) => handleResponse(httpExchange, 200, response)
       case _ => handleResponse(httpExchange, 404, "404 - Not Found")
     }
   })
   server.start()
 
   def handleResponse(httpExchange: HttpExchange, rCode: Int, response: String): Unit = {
-    httpExchange.sendResponseHeaders(rCode, response.length())
+    httpExchange.sendResponseHeaders(rCode, response.length)
     val os = httpExchange.getResponseBody
     os.write(response.getBytes)
     os.close()
