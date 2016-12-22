@@ -38,7 +38,7 @@ class Handler(val routes: String => Any) extends HttpHandler {
 }
 
 object Int {
-  def unapply(i: String): Option[Int] = Try(i.toInt).toOption
+  def unapply(s: String): Option[Int] = Try(s.toInt).toOption
 }
 
 object String {
