@@ -5,7 +5,7 @@ import scala.util.matching.Regex
   * @version 1.0
   * @since 22-12-2016
   */
-object Main {
+object Example {
 
   val contact: Regex = """\/contact\/?(.*)?""".r
 
