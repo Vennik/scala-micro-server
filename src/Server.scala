@@ -9,10 +9,10 @@ import scala.util.{Success, Try}
   * @version 1.0
   * @since 22-12-2016
   */
-class Server(val routes: String => Any, val port: Int = 80) {
+class Server(routes: String => Any, port: Int = 80) {
 
   val server: HttpServer = HttpServer.create(new InetSocketAddress(port), 0)
-  server.createContext("/", (httpExchange: HttpExchange) => {
+  server.createContext("/", (httpExchange) => {
     Try(routes(httpExchange.getRequestURI.getPath).toString) match {
       case Success(response) => handleResponse(httpExchange, 200, response)
       case _ => handleResponse(httpExchange, 404, "404 - Not Found")
@@ -27,12 +27,4 @@ class Server(val routes: String => Any, val port: Int = 80) {
     os.close()
   }
 
-}
-
-object Int {
-  def unapply(s: String): Option[Int] = Try(s.toInt).toOption
-}
-
-object String {
-  def unapply(s: String): Option[String] = Option(s)
 }

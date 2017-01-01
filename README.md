@@ -5,9 +5,17 @@ A  simple Scala Micro Server. Routing can be done with regular expressions or li
 ```
 val contact: Regex = """\/contact(?:\/(.+))?""".r
 new Server({
-  case contact(Int(id)) => "Contact int " + id
-  case contact(String(name)) => "Contact string " + name
+  case contact(int(id)) => "Contact int " + id
+  case contact(str(name)) => "Contact string " + name
   case contact(_*) => "Contact nothing"
   case "/" => "Home"
 }, 80)
+```
+```
+object int {
+  def unapply(s: String): Option[Int] = Try(s.toInt).toOption
+}
+object str {
+  def unapply(s: String): Option[String] = Option(s)
+}
 ```

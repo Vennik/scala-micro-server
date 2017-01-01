@@ -1,3 +1,4 @@
+import scala.util.Try
 import scala.util.matching.Regex
 
 /**
@@ -11,11 +12,19 @@ object Example {
 
   def main(args: Array[String]): Unit = {
     new Server({
-      case contact(Int(id)) => "Contact int " + id
-      case contact(String(name)) => "Contact string " + name
+      case contact(int(id)) => "Contact int " + id
+      case contact(str(name)) => "Contact string " + name
       case contact(_*) => "Contact nothing"
       case "/" => "Home"
     }, 80)
   }
 
+}
+
+object int {
+  def unapply(s: String): Option[Int] = Try(s.toInt).toOption
+}
+
+object str {
+  def unapply(s: String): Option[String] = Option(s)
 }
